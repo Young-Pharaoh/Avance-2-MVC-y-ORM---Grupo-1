@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Archivo de configuración ORM (Object-Relational Mapping) -->
+<!-- Este archivo mapea las clases Java a las tablas de la base de datos -->
+
+<configuration>
+    <!-- Configuración de la base de datos -->
+    <database>
+        <name>catalogo_productos</name>
+        <driver>com.mysql.jdbc.Driver</driver>
+        <url>jdbc:mysql://localhost:3306/catalogo_productos</url>
+        <username>root</username>
+        <password></password>
+    </database>
+    
+    <!-- Mapeos de entidades -->
+    <entity>
+        <class>modelo.Producto</class>
+        <table name="productos">
+            <column name="id" property="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+            <column name="nombre" property="nombre" type="VARCHAR(100)" nullable="false" />
+            <column name="descripcion" property="descripcion" type="TEXT" />
+            <column name="precio" property="precio" type="DECIMAL(10,2)" nullable="false" />
+            <column name="cantidad" property="cantidad" type="INTEGER" nullable="false" />
+            <column name="categoria" property="categoria" type="VARCHAR(50)" />
+        </table>
+    </entity>
+</configuration>
