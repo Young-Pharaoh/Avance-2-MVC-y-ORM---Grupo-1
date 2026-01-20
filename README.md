@@ -1,126 +1,100 @@
-# Avance 2: MVC y ORM - Grupo 1
+# Catálogo de Productos - MVC + JPA/EclipseLink
 
-## 🎯 Objetivo del Proyecto
+Aplicación web Java con patrón MVC, ORM (EclipseLink) y base de datos MySQL.
 
-Implementación del patrón arquitectónico MVC (Model-View-Controller) con ORM (Object-Relational Mapping) para un sistema de gestión de catálogo de productos.
+## 📋 Requisitos
 
-## 📋 Casos de Uso Implementados
+- Java JDK 8+
+- Eclipse IDE
+- XAMPP (MySQL + Apache)
+- MySQL Connector JDBC (`mysql-connector-j-8.0.33.jar`)
 
-### ✅ Caso de Uso 1: Explorar Catálogo de Productos
-- **Estado:** Completamente implementado
-- **Descripción:** Permite a los clientes autenticados ver la lista completa de productos y buscar productos específicos por nombre
-- **Documentación:** Ver [DOCUMENTACION_CASO_USO_1.md](DOCUMENTACION_CASO_USO_1.md)
+## 🚀 Configuración Rápida
 
-## 📁 Estructura del Proyecto
+### 1. Base de Datos
+
+En **phpMyAdmin** (http://localhost/phpmyadmin):
+1. Ve a la pestaña "SQL"
+2. Abre y ejecuta el archivo [`schema.sql`](schema.sql)
+
+### 2. Conectar a Eclipse
+
+1. Añade el JAR al proyecto:
+   - Click derecho → **Build Path → Configure Build Path**
+   - **Libraries** → **Add External JARs**
+   - Selecciona `mysql-connector-j-8.0.33.jar`
+
+### 3. Verificar Conexión
+
+Los archivos de configuración están listos:
+- `ORM/src/main/resources/META-INF/persistence.xml` - Configuración JPA
+- `ORM/ORMConfig.java` - Credenciales BD
+
+Credenciales:
+- Usuario: `root`
+- Contraseña: (vacía)
+- BD: `catalogo_productos`
+- URL: `jdbc:mysql://localhost:3306/catalogo_productos?useSSL=false&serverTimezone=UTC`
+
+## 📁 Estructura
 
 ```
-Avance-2-MVC-y-ORM---Grupo-1/
-├── Modelo/
-│   └── Producto.java
-├── DAO/
-│   └── ProductoDAO.java
-├── Controlador/
-│   ├── ExplorarCatalogoController.java
-│   └── ExplorarCatalogoServlet.java
-├── ORM/
-│   ├── ormconfig.xml
-│   └── ORMConfig.java
-├── jsp/
-│   ├── PantallaCatalogo.jsp
-│   ├── MensajeError.jsp
-│   └── DetallesProducto.jsp
-├── web.xml
-├── DOCUMENTACION_CASO_USO_1.md
-└── README.md
+├── ORM/                    # Mapeo JPA/EclipseLink
+│   └── src/main/resources/META-INF/persistence.xml
+├── Modelo/                 # Entidades (Producto, Compra)
+├── DAO/                    # Acceso a datos
+├── Controlador/            # Servlets
+├── jsp/                    # Vistas
+├── schema.sql              # Script de BD
+└── README.md               # Este archivo
 ```
 
-## 🏗️ Arquitectura MVC
+## 💾 Base de Datos
 
-### Modelo (M)
-- **Producto.java:** Entidad que representa un producto
+**Tablas:** `productos` (7 registros) y `compras`
 
-### Vista (V)
-- **PantallaCatalogo.jsp:** Lista de productos con búsqueda
-- **MensajeError.jsp:** Mensajes de error
-- **DetallesProducto.jsp:** Detalles de un producto
+**Campos de productos:**
+- `id` - PK Auto-incremento
+- `imagen` - URL de imagen
+- `descripcion` - Descripción
+- `precio` - DECIMAL(10,2)
+- `condicion` - "nuevo" o "usado"
+- `disponibilidad` - BOOLEAN
 
-### Controlador (C)
-- **ExplorarCatalogoController.java:** Lógica de negocio
-- **ExplorarCatalogoServlet.java:** Manejo de solicitudes HTTP
+## 🔗 Usar los DAOs
 
-## 🔌 Capa DAO y ORM
-
-### DAO (Data Access Object)
-- **ProductoDAO.java:** Operaciones CRUD y búsquedas
-
-### ORM (Object-Relational Mapping)
-- **ormconfig.xml:** Mapeos objeto-relacional
-- **ORMConfig.java:** Configuración de conexión
-
-## 🚀 Cómo Utilizar
-
-### 1. Configurar Base de Datos
-```sql
-CREATE DATABASE catalogo_productos;
-USE catalogo_productos;
-
-CREATE TABLE productos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    precio DECIMAL(10, 2) NOT NULL,
-    cantidad INT NOT NULL,
-    categoria VARCHAR(50)
-);
-```
-
-### 2. Acceder desde el Navegador
-- **Ver catálogo:** `http://localhost:8080/app/explorarCatalogo?action=listar`
-- **Buscar producto:** `http://localhost:8080/app/explorarCatalogo?action=buscar&busqueda=Laptop`
-- **Ver detalles:** `http://localhost:8080/app/explorarCatalogo?action=detalles&id=1`
-
-### 3. Ejemplo de Uso Programático
 ```java
-// Crear controlador
-ExplorarCatalogoController controlador = new ExplorarCatalogoController();
+// Obtener productos disponibles
+ProductoDAO dao = new ProductoDAOImpl();
+List<Producto> productos = dao.obtenerDisponibles();
 
-// Ver lista de productos
-List<Producto> productos = controlador.verListaProductos();
+// Crear una compra
+Compra compra = new Compra();
+compra.setFecha(new Date());
+compra.setTotal(99.99);
+compra.setIdCliente(1);
 
-// Buscar producto
-List<Producto> resultados = controlador.buscarProducto("Laptop");
-
-// Obtener detalles
-Producto producto = controlador.obtenerDetallesProducto(1);
+CompraDAO compraDAO = new CompraDAO();
+compraDAO.registrarCompra(compra);
 ```
 
-## 📦 Dependencias
+## 🐛 Solución de Problemas
 
-### JARs Necesarios
-- `mysql-connector-java-5.1.49.jar` - Driver JDBC para MySQL
-- `javax.servlet-api-3.1.0.jar` - API de Servlets
-- `jsp-api-2.3.1.jar` - API de JSP
+| Problema | Solución |
+|----------|----------|
+| "Unknown database" | Ejecuta `schema.sql` en phpMyAdmin |
+| "Access denied" | Verifica usuario/contraseña en `persistence.xml` |
+| "No driver found" | Añade el MySQL Connector JAR al Build Path |
+| Connection refused | MySQL no está corriendo en XAMPP |
 
-## ✨ Características Implementadas
+## ✅ Características
 
-- ✅ Patrón MVC completo
-- ✅ Patrón DAO para acceso a datos
-- ✅ ORM con mapeos XML
-- ✅ JSP con HTML5 y CSS3
-- ✅ Manejo de errores
-- ✅ Búsqueda de productos
-- ✅ Interfaz responsiva
-- ✅ Documentación completa
-
-## 📝 Documentación
-
-Para más detalles, consulte [DOCUMENTACION_CASO_USO_1.md](DOCUMENTACION_CASO_USO_1.md)
-
-## 👥 Grupo 1
-
-Integrantes del equipo que contribuyeron a este proyecto.
+- ✓ JPA/EclipseLink ORM
+- ✓ Patrón MVC
+- ✓ MySQL en XAMPP
+- ✓ DAOs para Producto y Compra
+- ✓ Configuración centralizada
 
 ---
 
-**Última actualización:** Enero 2026  
-**Estado:** Caso de Uso 1 Completado
+**Última actualización:** Enero 20, 2026

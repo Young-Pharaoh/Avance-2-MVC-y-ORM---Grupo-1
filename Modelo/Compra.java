@@ -1,28 +1,39 @@
 package Modelo;
 
+import jakarta.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "compras")
 public class Compra {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
+
     private double total;
+
+    @Column(name = "id_cliente")
     private int idCliente;
 
     public Compra() {
     }
 
-    public Compra(int id, Date fecha, double total, int idCliente) {
+    public Compra(Integer id, Date fecha, double total, int idCliente) {
         this.id = id;
         this.fecha = fecha;
         this.total = total;
         this.idCliente = idCliente;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
